@@ -1,0 +1,134 @@
+{
+  "preamble": {
+    "title": "lincon/gift-card_pycardano",
+    "description": "Aiken contracts for project 'lincon/gift-card_pycardano'",
+    "version": "0.0.0",
+    "plutusVersion": "v2",
+    "license": "Apache-2.0"
+  },
+  "validators": [
+    {
+      "title": "oneshot.gift_card",
+      "redeemer": {
+        "title": "rdmr",
+        "schema": {
+          "$ref": "#/definitions/oneshot~1Action"
+        }
+      },
+      "parameters": [
+        {
+          "title": "token_name",
+          "schema": {
+            "$ref": "#/definitions/ByteArray"
+          }
+        },
+        {
+          "title": "utxo_ref",
+          "schema": {
+            "$ref": "#/definitions/aiken~1transaction~1OutputReference"
+          }
+        }
+      ],
+      "compiledCode": "5901db01000032323232323232323223222232533300932323232533300d3370e9000180600089919191919191919191919299980d980f0010991919299980d99b874800000454ccc06cc8cc004004030894ccc08000452809919299980f99baf3024301d00201a14a2266008008002604800460440022a66603666e1c009200213371e00602e29405854ccc06ccdc380124002266e3c00c05c528180c80a1bad301b002375c60320022c603800264664464a66603466e1d2002001100213756603e60300066030004646600200200444a6660380022980103d87a8000132323232533301d3371e01e004266e95200033021374c00297ae01330060060033756603c0066eb8c070008c080008c0780052f5bded8c0646600200200444a666036002297adef6c60132323232533301c3371e911000021003133020337606ea4008dd3000998030030019bab301d003375c6036004603e004603a0026eacc068004c068004c064004c060004c05c008dd6180a80098068029bae3013001300b0011630110013011002300f0013007002149858c94ccc024cdc3a40000022a666018600e0062930b0a99980499b874800800454ccc030c01c00c52616163007002375c0024600a6ea80048c00cdd5000ab9a5573aaae7955cfaba05742ae881",
+      "hash": "a83d713d1b4dcf2196672e568edb993eebe78ce2ab0711df43a0a487"
+    },
+    {
+      "title": "oneshot.redeem",
+      "datum": {
+        "title": "_d",
+        "schema": {
+          "$ref": "#/definitions/Data"
+        }
+      },
+      "redeemer": {
+        "title": "_r",
+        "schema": {
+          "$ref": "#/definitions/Data"
+        }
+      },
+      "parameters": [
+        {
+          "title": "token_name",
+          "schema": {
+            "$ref": "#/definitions/ByteArray"
+          }
+        },
+        {
+          "title": "policy_id",
+          "schema": {
+            "$ref": "#/definitions/ByteArray"
+          }
+        }
+      ],
+      "compiledCode": "5901320100003232323232323232232232222533300932323232323232323232533301630190021323253330153370e0029000899b8f00201214a06eb4c058008dd7180a0008b180b80099199119299980a99b874800800440084dd5980d180a001980a9baa002323300100100222533301700114c0103d87a800013232323253330183371e026004266e9520003301c374c00297ae0133006006003375660320066eb8c05c008c06c008c0640052f5bded8c0646600200200444a66602c002297adef6c6013232323253330173371e91100002100313301b337606ea4008dd3000998030030019bab3018003375c602c004603400460300026eacc054004c054004c050004c04c004c048004c028004c03c004c02000452616375c0026eb80048c010dd5000ab9a5573aaae7955cfaba05742ae89",
+      "hash": "5b1da44c1eda69d7591a1f0e0c39af5bd7a9e9e34fe7b0ecde83201f"
+    }
+  ],
+  "definitions": {
+    "ByteArray": {
+      "dataType": "bytes"
+    },
+    "Data": {
+      "title": "Data",
+      "description": "Any Plutus data."
+    },
+    "Int": {
+      "dataType": "integer"
+    },
+    "aiken/transaction/OutputReference": {
+      "title": "OutputReference",
+      "description": "An `OutputReference` is a unique reference to an output on-chain. The `output_index`\n corresponds to the position in the output list of the transaction (identified by its id)\n that produced that output",
+      "anyOf": [
+        {
+          "title": "OutputReference",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "transaction_id",
+              "$ref": "#/definitions/aiken~1transaction~1TransactionId"
+            },
+            {
+              "title": "output_index",
+              "$ref": "#/definitions/Int"
+            }
+          ]
+        }
+      ]
+    },
+    "aiken/transaction/TransactionId": {
+      "title": "TransactionId",
+      "description": "A unique transaction identifier, as the hash of a transaction body. Note that the transaction id\n isn't a direct hash of the `Transaction` as visible on-chain. Rather, they correspond to hash\n digests of transaction body as they are serialized on the network.",
+      "anyOf": [
+        {
+          "title": "TransactionId",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "hash",
+              "$ref": "#/definitions/ByteArray"
+            }
+          ]
+        }
+      ]
+    },
+    "oneshot/Action": {
+      "title": "Action",
+      "anyOf": [
+        {
+          "title": "Mint",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": []
+        },
+        {
+          "title": "Burn",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": []
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,96 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>One Shot</title>
+	{% tailwind_css %}
+	<!-- custom inline js function to interact with the browser wallet using cip 30 standard -->
+	<script>
+	function connectWallet() {
+		if (window.cardano) {
+			window.cardano.eternl.enable().then((api) => {
+				if (api) {
+					alert("Wallet connected successfully");
+					api.getUtxos().then((utxos) => {
+						// send utxos as a post request to the backend
+						fetch("/", {
+							method: "POST",
+							// set csrf token from django
+							headers: {
+								"Content-Type": "application/json",
+								"X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0].value,
+							},
+							body: JSON.stringify({ utxos: utxos }),
+						});
+						// reload page after 1 second
+						setTimeout(() => {
+							window.location.reload();
+						}, 2000);
+					});
+				} else {
+					alert("Wallet connection failed");
+				}
+			});
+		} else {
+			alert("Cardano Provider not found");
+		}
+	}
+	</script>
+</head>
+
+<body class="bg-gray-50">
+	{% csrf_token %}
+	<div class="grid max-w-2xl mx-auto my-20 gap-6">
+		<h2 class="text-lg font-semibold text-gray-900">
+		Make an one shot minting and lock contract
+		</h2>
+		<div class="grid p-4 rounded-xl shadow-md gap-4 bg-white">
+			<div class="grid gap-1">
+				<h3 class="text-sm font-medium text-gray-700">Redeem</h3>
+				<pre class="bg-gray-100 p-2 rounded overflow-x-scroll">{{validators.redeem.script}}</pre>
+			</div>
+
+			<div class="grid gap-1">
+				<h3 class="text-sm font-medium text-gray-700">Gift Card</h3>
+				<pre class="bg-gray-100 p-2 rounded overflow-x-scroll">{{validators.gift_card.script}}</pre>
+			</div>
+
+			<!-- add a new button to connect the wallet using the cip 30 standard -->
+			{% if wallet_connected %}
+			<button class="bg-green-500 text-white font-bold py-2 px-4 rounded" disabled id="connectWallet">
+				Wallet Connected ✓
+			</button>
+			{% else %}
+			<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="connectWallet" onclick="connectWallet()">
+				Connect Wallet
+			</button>
+			{% endif %}
+		</div>
+
+		{% if wallet_connected %}
+		<div class="grid gap-4 p-4 rounded-xl shadow-md bg-white">
+			<form class="grid gap-4" action="/makecontracts/" method="POST">
+				{% csrf_token %}
+				<!-- input for token name -->
+				<div class="grid gap-1">
+					<label for="tokenName" class="block text-sm font-medium text-gray-700">
+						Token Name
+					</label>
+					<input
+						type="text"
+						name="tokenName"
+						id="tokenName"
+						class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+						required
+					/>
+				</div>
+	
+				<Button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit">
+					Make Contracts
+				</Button>
+			</form>
+		</div>
+		{% endif %}
+	</div>
+</body>
+</html>

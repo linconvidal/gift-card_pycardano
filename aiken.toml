@@ -1,0 +1,14 @@
+name = "lincon/gift-card_pycardano"
+version = "0.0.0"
+license = "Apache-2.0"
+description = "Aiken contracts for project 'lincon/gift-card_pycardano'"
+
+[repository]
+user = "lincon"
+project = "gift-card_pycardano"
+platform = "github"
+
+[[dependencies]]
+name = "aiken-lang/stdlib"
+version = "1.6.0"
+source = "github"

@@ -1,0 +1,51 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>One Shot</title>
+	{% tailwind_css %}
+	<script>
+		// Function to reload the page every 10 seconds if tx_status is "pending"
+		function reloadPage() {
+			if ("{{ tx_status }}" === "pending") {
+				location.reload();
+			}
+		}
+	</script>
+</head>
+
+<body onload="setInterval(reloadPage, 10000)" class="bg-gray-50">
+	<div class="grid max-w-2xl mx-auto my-20 gap-6">
+		<h2 class="text-lg font-semibold text-gray-900">
+			Make an one shot minting and lock contract
+		</h2>
+
+		<div class="grid p-4 rounded-xl shadow-md gap-4 bg-white">
+			<div class="grid gap-1">
+				<h3 class="text-sm font-medium text-gray-700">ADA Locked</h3>
+					
+				<a class="text-blue-500 hover:text-blue-700" target="_blank" href="https://preprod.cardanoscan.io/transaction/{{ lock_tx_hash }}"
+					><pre class="bg-gray-100 p-2 rounded overflow-hidden">{{lock_tx_hash}}</pre>
+				</a>
+			</div>
+
+			<!-- check if tx_status is "confirmed" -->
+			{% if tx_status == "confirmed" %}
+			<h3 class="text-sm font-medium text-gray-700 mx-auto">Transaction confirmed! ✅</h3>
+			<form action="/unlock/" method="POST" class="grid">
+				{% csrf_token %}
+				<Button
+					type="submit"
+					class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+					> Redeem Gift Card (Unlocks ADA)
+				</Button>
+			</form>
+			{% elif tx_status == "pending" %}
+			<h3 class="text-sm font-medium text-gray-700">Transaction pending... ⏳</h3>
+			{% else %}
+			<h3 class="text-sm font-medium text-gray-700">Transaction failed! ❌</h3>
+			{% endif %}
+		</div>
+	</div>
+</body>
+</html>

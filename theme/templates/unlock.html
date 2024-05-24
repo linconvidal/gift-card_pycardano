@@ -1,0 +1,71 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+	<Head>
+        <title>One Shot</title>
+	{% tailwind_css %}
+	<!-- custom inline js function to sign the transaction with the browser wallet using cip 30 standard -->
+	<script>
+		async function signTxCIP30() {
+			if (window.cardano.eternl.isEnabled()) {
+				let api = await window.cardano.eternl.enable();
+				let witness = await api.signTx("{{ unsigned_tx }}");
+				console.log(witness);
+				// TODO: error handling
+				// POST witness to backend
+				let csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+				let response = await fetch("/lock/sign/", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"Access-Control-Allow-Origin": "*",
+						"X-CSRFToken": csrfToken,
+					},
+					body: JSON.stringify({
+						witness: witness,
+					}),
+				});
+			} else {
+				alert("Wallet connection failed");
+			}
+		}
+	</script>
+	</Head>
+
+	<body onload="signTxCIP30()">
+		<div class="max-w-2xl mx-auto mt-20 mb-10">
+			<div class="mb-10">
+				<h2 class="text-lg font-semibold text-gray-900">
+				Make a one shot minting and lock contract
+				</h2>
+
+				<h3 class="mt-4 mb-2">ADA Locked</h3>
+ 
+                <a
+                  class="mb-2"
+                  target="_blank"
+                  href="https://preprod.cardanoscan.io/transaction/{{ lock_tx_hash }}"
+                >
+                  {{lock_tx_hash}}
+                </a>
+
+				<form action="/unlock/" method="POST" class="mt-10 grid grid-cols-1 gap-y-8">
+					{% csrf_token %}
+					
+					
+		
+					<Button
+						type="submit"
+						class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+						> Redeem Gift Card (Unlocks ADA)
+					</Button>
+				</form>
+			</div>
+
+				
+
+			
+
+		</div>
+	</body>
+</html>

@@ -1,0 +1,47 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>One Shot</title>
+	{% tailwind_css %}
+	<!-- custom inline js function to sign the transaction with the browser wallet using cip 30 standard -->
+	<script>
+		async function signTxCIP30() {
+			if (window.cardano.eternl.isEnabled()) {
+				let api = await window.cardano.eternl.enable();
+				let witness = await api.signTx("{{ unsigned_lock_tx }}");
+				console.log(witness);
+				let csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+				let response = await fetch("/lock/sign/", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"Access-Control-Allow-Origin": "*",
+						"X-CSRFToken": csrfToken,
+					},
+					body: JSON.stringify({
+						witness: witness,
+					}),
+				});
+				// response is a redirect to the lock_success page
+				
+				if (response.status == 200) {
+					window.location.href = "/lock/success/";
+				}
+			} else {
+				alert("Wallet connection failed");
+			}
+		}
+	</script>
+</htmlead>
+
+<body onload="signTxCIP30()" class="bg-gray-50">
+	{% csrf_token %}
+	<div class="grid max-w-2xl mx-auto my-20 gap-6">
+		<h2 class="text-lg font-semibold text-gray-900">
+		Make an one shot minting and lock contract
+		</h2>
+		<h3 class="text-sm font-medium text-gray-700">Signing the lock transaction...</h3>
+	</div>
+</body>
+</html>
